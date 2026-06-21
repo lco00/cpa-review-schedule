@@ -4,6 +4,7 @@ let editingTopicKey = null;
 let editingLectureId = null;
 let editingReviewHistory = [];
 let priorityShowAll = false;
+let headerEditMenuOpen = false;
 let modalCallback = null;
 let isComposing = false;
 
@@ -1107,6 +1108,49 @@ function renderSettings() {
   renderExamSettings();
 }
 
+/* ── ヘッダー編集メニュー ── */
+
+function closeHeaderEditMenu() {
+  const menu = document.getElementById('header-edit-menu');
+  const trigger = document.getElementById('header-edit-trigger');
+  if (!menu || !trigger) return;
+  menu.hidden = true;
+  trigger.setAttribute('aria-expanded', 'false');
+  headerEditMenuOpen = false;
+}
+
+function openHeaderEditMenu() {
+  const menu = document.getElementById('header-edit-menu');
+  const trigger = document.getElementById('header-edit-trigger');
+  if (!menu || !trigger) return;
+  menu.hidden = false;
+  trigger.setAttribute('aria-expanded', 'true');
+  headerEditMenuOpen = true;
+}
+
+function toggleHeaderEditMenu() {
+  if (headerEditMenuOpen) closeHeaderEditMenu();
+  else openHeaderEditMenu();
+}
+
+function initHeaderEditMenu() {
+  const trigger = document.getElementById('header-edit-trigger');
+  const menu = document.getElementById('header-edit-menu');
+  if (!trigger || !menu || trigger.dataset.bound) return;
+  trigger.dataset.bound = '1';
+
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleHeaderEditMenu();
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!headerEditMenuOpen) return;
+    if (trigger.contains(e.target) || menu.contains(e.target)) return;
+    closeHeaderEditMenu();
+  });
+}
+
 /* ── 初期化 ── */
 
 function init() {
@@ -1134,6 +1178,7 @@ function init() {
   }
 
   initSettingsEvents();
+  initHeaderEditMenu();
 
   window.addEventListener('error', (ev) => {
     console.error('[app] uncaught error:', ev.message, ev.filename, ev.lineno);
@@ -1142,6 +1187,7 @@ function init() {
   if (openEditBtn) {
     openEditBtn.addEventListener('click', (e) => {
       e.preventDefault();
+      closeHeaderEditMenu();
       openEditPanel();
     });
   } else {
@@ -1159,6 +1205,7 @@ function init() {
   if (openLecturesBtn) {
     openLecturesBtn.addEventListener('click', (e) => {
       e.preventDefault();
+      closeHeaderEditMenu();
       openLecturesPanel();
     });
   }
@@ -1226,13 +1273,14 @@ function init() {
     initGraphUI();
     initBackupUI();
     initExamUI();
+    initAuthLogoutButton();
   } catch (err) {
     console.error('init render failed:', err);
   }
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener('DOMContentLoaded', () => initAuth(init));
 } else {
-  init();
+  initAuth(init);
 }

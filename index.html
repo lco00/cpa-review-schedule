@@ -12,22 +12,28 @@
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/home.css?v=38">
+  <link rel="stylesheet" href="css/home.css?v=42">
 </head>
 <body class="app">
-  <div class="top-actions">
-    <button type="button" id="open-edit-btn" class="top-action-btn top-action-btn--primary" aria-label="科目・論点編集">
-      <span class="top-action-btn__icon" aria-hidden="true">⚙️</span>
-      <span class="top-action-btn__label">科目・論点編集</span>
-    </button>
-    <button type="button" id="open-lectures-btn" class="top-action-btn top-action-btn--secondary" aria-label="登録済み講義編集">
-      <span class="top-action-btn__icon" aria-hidden="true">📝</span>
-      <span class="top-action-btn__label">登録済み講義編集</span>
-    </button>
-    <button type="button" id="open-graph-btn" class="top-action-btn top-action-btn--secondary" aria-label="グラフ">
-      <span class="top-action-btn__icon" aria-hidden="true">📊</span>
-      <span class="top-action-btn__label">グラフ</span>
-    </button>
+  <div id="auth-lock" class="auth-lock">
+    <div class="auth-lock__card">
+      <p class="auth-lock__eyebrow">CPA復習スケジュール</p>
+      <h1 class="auth-lock__title">ロック解除</h1>
+      <p class="auth-lock__desc">パスワードを入力してください</p>
+      <form id="auth-form" class="auth-lock__form">
+        <input
+          type="password"
+          id="auth-password"
+          class="auth-lock__input"
+          autocomplete="current-password"
+          enterkeyhint="go"
+          required
+          aria-label="パスワード"
+        >
+        <p id="auth-error" class="auth-lock__error" hidden>パスワードが正しくありません</p>
+        <button type="submit" class="auth-lock__submit">開く</button>
+      </form>
+    </div>
   </div>
 
   <header class="app-header">
@@ -40,7 +46,41 @@
         <span class="exam-countdown-card__hint">タップで切替</span>
       </button>
     </div>
-    <h1 class="app-header__title">今日やること</h1>
+    <div class="app-header__title-row">
+      <h1 class="app-header__title">今日やること</h1>
+      <div class="header-toolbar">
+        <button type="button" id="open-graph-btn" class="header-toolbar-btn" aria-label="グラフ">
+          <span class="header-toolbar-btn__icon" aria-hidden="true">📊</span>
+          <span class="header-toolbar-btn__label">グラフ</span>
+        </button>
+        <div class="header-toolbar-menu">
+          <button
+            type="button"
+            id="header-edit-trigger"
+            class="header-toolbar-btn header-toolbar-btn--menu"
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-controls="header-edit-menu"
+          >
+            <span class="header-toolbar-btn__icon" aria-hidden="true">⚙️</span>
+            <span class="header-toolbar-btn__label">編集</span>
+            <span class="header-toolbar-btn__caret" aria-hidden="true">▼</span>
+          </button>
+          <ul id="header-edit-menu" class="header-edit-menu" role="menu" hidden>
+            <li role="none">
+              <button type="button" id="open-edit-btn" class="header-edit-menu__item" role="menuitem">
+                科目・論点編集
+              </button>
+            </li>
+            <li role="none">
+              <button type="button" id="open-lectures-btn" class="header-edit-menu__item" role="menuitem">
+                登録済み講義編集
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
     <p id="header-date" class="app-header__date"></p>
     <p class="home-count" id="header-extra" hidden></p>
   </header>
@@ -107,6 +147,11 @@
               <input type="file" id="backup-import-input" accept="application/json,.json" hidden>
             </label>
           </div>
+        </section>
+        <section class="auth-settings-section" aria-labelledby="auth-settings-heading">
+          <h3 id="auth-settings-heading" class="auth-settings-heading">ロック</h3>
+          <p class="auth-settings-desc">ログアウトすると、次回起動時にパスワード入力が必要になります。</p>
+          <button type="button" id="auth-logout-btn" class="auth-logout-btn">ログアウト</button>
         </section>
       </div>
     </div>
@@ -210,8 +255,9 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script src="js/storage.js?v=34"></script>
-  <script src="js/charts.js?v=39"></script>
-  <script src="js/app.js?v=34"></script>
+  <script src="js/storage.js?v=40"></script>
+  <script src="js/charts.js?v=40"></script>
+  <script src="js/auth.js?v=40"></script>
+  <script src="js/app.js?v=41"></script>
 </body>
 </html>

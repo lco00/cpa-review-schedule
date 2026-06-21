@@ -5,8 +5,7 @@
   top: 0;
   z-index: 10;
   background: var(--bg);
-  padding: 100px 20px 12px;
-  padding-top: calc(100px + env(safe-area-inset-top, 0px));
+  padding: calc(12px + env(safe-area-inset-top, 0px)) 16px 12px;
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
@@ -99,84 +98,144 @@
   color: var(--text-secondary);
 }
 
-/* 画面右上固定ボタン群 */
-.top-actions {
-  position: fixed;
-  top: calc(10px + env(safe-area-inset-top, 0px));
-  right: calc(12px + env(safe-area-inset-right, 0px));
-  z-index: 200;
+.app-header__title-row {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.app-header__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--text);
+}
+
+.header-toolbar {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
   gap: 8px;
 }
 
-.top-action-btn {
+.header-toolbar-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   min-height: 44px;
   padding: 10px 16px;
-  border: none;
+  border: 1.5px solid var(--border);
   border-radius: 22px;
+  background: var(--surface);
+  color: var(--text);
   font-family: inherit;
   font-size: 0.8125rem;
   font-weight: 600;
   line-height: 1.2;
+  white-space: nowrap;
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  white-space: nowrap;
   -webkit-appearance: none;
   appearance: none;
+  transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
-.top-action-btn--primary {
-  background: var(--accent);
-  color: #fff;
-  box-shadow: 0 4px 14px rgba(0, 113, 227, 0.35);
-}
-
-.top-action-btn--secondary {
-  background: var(--surface);
-  color: var(--text);
-  border: 1.5px solid var(--border);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.top-action-btn__icon {
-  font-size: 1rem;
-  line-height: 1;
-}
-
-.top-action-btn:active {
+.header-toolbar-btn:active {
   transform: scale(0.97);
   opacity: 0.9;
 }
 
-@media (max-width: 380px) {
-  .top-action-btn {
-    font-size: 0.75rem;
-    padding: 10px 12px;
-    gap: 4px;
-  }
-
-  .app-header {
-    padding-top: calc(96px + env(safe-area-inset-top, 0px));
-  }
-
-  .app-header__title {
-    font-size: 1.75rem;
-  }
+.header-toolbar-btn__icon {
+  font-size: 1rem;
+  line-height: 1;
+  flex-shrink: 0;
 }
 
-.app-header__title {
-  font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.15;
+.header-toolbar-btn__label {
+  line-height: 1.2;
+}
+
+.header-toolbar-btn__caret {
+  font-size: 0.625rem;
+  line-height: 1;
+  margin-left: -2px;
+  opacity: 0.75;
+}
+
+.header-toolbar-menu {
+  position: relative;
+}
+
+.header-edit-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 300;
+  min-width: 188px;
+  margin: 0;
+  padding: 6px 0;
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
+  overflow: hidden;
+}
+
+.header-edit-menu[hidden] {
+  display: none !important;
+}
+
+.header-edit-menu__item {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 500;
   color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.header-edit-menu__item:active {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 380px) {
+  .app-header__title {
+    font-size: 1.625rem;
+  }
+
+  .header-toolbar-btn {
+    min-height: 40px;
+    padding: 9px 12px;
+    gap: 4px;
+    font-size: 0.75rem;
+  }
+
+  .header-toolbar-btn__icon {
+    font-size: 0.9375rem;
+  }
+
+  .header-edit-menu {
+    min-width: 168px;
+  }
+
+  .header-edit-menu__item {
+    font-size: 0.875rem;
+    padding: 11px 14px;
+  }
 }
 
 .app-header__date {
@@ -1218,6 +1277,130 @@ select.ios-cell__control option {
   padding: 16px;
   background: var(--surface);
   border-radius: 12px;
+}
+
+.auth-lock {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--bg, #f2f2f7);
+}
+
+.auth-lock[hidden] {
+  display: none !important;
+}
+
+.auth-lock__card {
+  width: 100%;
+  max-width: 360px;
+  padding: 28px 24px;
+  border-radius: 16px;
+  background: var(--surface, #fff);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.auth-lock__eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.auth-lock__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.auth-lock__desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+.auth-lock__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-lock__input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 1rem;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.auth-lock__error {
+  font-size: 0.8125rem;
+  color: var(--forgot, #ff3b30);
+  margin: 0;
+}
+
+.auth-lock__submit {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent, #0071e3);
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.auth-lock__submit:active {
+  opacity: 0.85;
+}
+
+.auth-settings-section {
+  margin-top: 24px;
+  padding: 16px;
+  background: var(--surface);
+  border-radius: 12px;
+}
+
+.auth-settings-heading {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.auth-settings-desc {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin-bottom: 12px;
+}
+
+.auth-logout-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--forgot, #ff3b30);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.auth-logout-btn:active {
+  opacity: 0.75;
 }
 
 .exam-settings-section {
