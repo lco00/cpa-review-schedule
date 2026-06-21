@@ -161,8 +161,22 @@ function loadData() {
         Math.max(0, data.selectedExamIndex),
         data.exams.length - 1
       );
+      if (!data.selectedExamId) {
+        const today = getToday();
+        const sorted = [...data.exams].sort((a, b) => {
+          const daysA = daysBetween(today, a.examDate);
+          const daysB = daysBetween(today, b.examDate);
+          if (daysA >= 0 && daysB >= 0) return daysA - daysB;
+          if (daysA >= 0) return -1;
+          if (daysB >= 0) return 1;
+          return daysB - daysA;
+        });
+        data.selectedExamId = sorted[0]?.id || null;
+        migrated = true;
+      }
     } else {
       data.selectedExamIndex = 0;
+      data.selectedExamId = null;
     }
     return data;
   } catch {
@@ -248,6 +262,7 @@ function createBackupPayload() {
       reviews: data.reviews,
       exams: data.exams || [],
       selectedExamIndex: data.selectedExamIndex ?? 0,
+      selectedExamId: data.selectedExamId ?? null,
       curveDisplayPeriod: data.curveDisplayPeriod ?? 90,
     },
   };
@@ -263,6 +278,7 @@ function validateBackupPayload(parsed) {
     reviews: Array.isArray(data.reviews) ? data.reviews : [],
     exams: Array.isArray(data.exams) ? data.exams : [],
     selectedExamIndex: Number.isInteger(data.selectedExamIndex) ? data.selectedExamIndex : 0,
+    selectedExamId: typeof data.selectedExamId === 'string' ? data.selectedExamId : null,
     curveDisplayPeriod: data.curveDisplayPeriod ?? 90,
   };
 }
@@ -284,22 +300,30 @@ function getExamDaysUntil(exam) {
 }
 
 function compareExamsByRemainingDays(a, b) {
-  const diffA = getExamDaysUntil(a);
-  const diffB = getExamDaysUntil(b);
-  const aRemaining = diffA >= 0;
-  const bRemaining = diffB >= 0;
+  const daysA = getExamDaysUntil(a);
+  const daysB = getExamDaysUntil(b);
 
-  if (aRemaining && bRemaining) {
-    if (diffA !== diffB) return diffA - diffB;
-    return a.examDate.localeCompare(b.examDate);
-  }
-  if (aRemaining !== bRemaining) return aRemaining ? -1 : 1;
-  if (diffB !== diffA) return diffB - diffA;
-  return a.examDate.localeCompare(b.examDate);
+  if (daysA >= 0 && daysB >= 0) return daysA - daysB;
+  if (daysA >= 0) return -1;
+  if (daysB >= 0) return 1;
+  return daysB - daysA;
 }
 
 function getExamsSortedByRemainingDays() {
   return getExams().sort(compareExamsByRemainingDays);
+}
+
+function setSelectedExamId(examId) {
+  const data = loadData();
+  if (!data.exams?.length) return;
+  if (!examId || !data.exams.some((exam) => exam.id === examId)) {
+    data.selectedExamId = getExamsSortedByRemainingDays()[0]?.id || null;
+  } else {
+    data.selectedExamId = examId;
+  }
+  const rawIndex = data.exams.findIndex((exam) => exam.id === data.selectedExamId);
+  data.selectedExamIndex = rawIndex >= 0 ? rawIndex : 0;
+  saveData(data);
 }
 
 function getSelectedExamIndex() {
@@ -309,32 +333,35 @@ function getSelectedExamIndex() {
 }
 
 function getSelectedExam() {
-  const exams = getExams();
-  if (!exams.length) return null;
-  return exams[getSelectedExamIndex()] || null;
+  const sorted = getExamsSortedByRemainingDays();
+  if (!sorted.length) return null;
+
+  const data = loadData();
+  if (data.selectedExamId) {
+    const selected = sorted.find((exam) => exam.id === data.selectedExamId);
+    if (selected) return selected;
+  }
+
+  return sorted[0];
 }
 
 function setSelectedExamIndex(index) {
   const data = loadData();
   if (!data.exams?.length) return;
-  data.selectedExamIndex = Math.min(Math.max(0, index), data.exams.length - 1);
-  saveData(data);
+  const sorted = getExamsSortedByRemainingDays();
+  const exam = sorted[Math.min(Math.max(0, index), sorted.length - 1)];
+  if (exam) setSelectedExamId(exam.id);
 }
 
 function cycleSelectedExam() {
-  const data = loadData();
-  if (!data.exams?.length) return null;
-
   const sorted = getExamsSortedByRemainingDays();
+  if (!sorted.length) return null;
+
   const current = getSelectedExam();
   const sortedIndex = current ? sorted.findIndex((exam) => exam.id === current.id) : -1;
-  const nextSortedIndex = (Math.max(0, sortedIndex) + 1) % sorted.length;
-  const nextExam = sorted[nextSortedIndex];
-  const rawIndex = data.exams.findIndex((exam) => exam.id === nextExam.id);
-
-  data.selectedExamIndex = rawIndex >= 0 ? rawIndex : 0;
-  saveData(data);
-  return data.exams[data.selectedExamIndex];
+  const nextSortedIndex = sortedIndex < 0 ? 0 : (sortedIndex + 1) % sorted.length;
+  setSelectedExamId(sorted[nextSortedIndex].id);
+  return sorted[nextSortedIndex];
 }
 
 function formatExamDateDisplay(dateStr) {
@@ -399,11 +426,24 @@ function deleteExam(examId) {
   const data = loadData();
   const idx = data.exams.findIndex((e) => e.id === examId);
   if (idx === -1) return false;
+
+  const wasSelected = data.selectedExamId === examId;
+  const keepId = wasSelected ? null : data.selectedExamId;
   data.exams.splice(idx, 1);
-  if (data.selectedExamIndex >= data.exams.length) {
+
+  if (!data.exams.length) {
+    data.selectedExamId = null;
     data.selectedExamIndex = 0;
+    saveData(data);
+    return true;
   }
+
   saveData(data);
+  if (keepId && data.exams.some((exam) => exam.id === keepId)) {
+    setSelectedExamId(keepId);
+  } else {
+    setSelectedExamId(getExamsSortedByRemainingDays()[0].id);
+  }
   return true;
 }
 
