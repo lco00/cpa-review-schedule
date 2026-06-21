@@ -1,4 +1,78 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="©Ò">
-  <rect width="512" height="512" rx="112" fill="#0071e3"/>
-  <path d="M148 278l68 68 148-148" fill="none" stroke="#ffffff" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="????">
+  <defs>
+    <linearGradient id="bg" x1="256" y1="0" x2="256" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6ec8ff"/>
+      <stop offset="100%" stop-color="#1f8fe8"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0b5ea8" flood-opacity="0.22"/>
+    </filter>
+    <filter id="iconShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#0b5ea8" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+
+  <circle cx="372" cy="132" r="58" fill="#ffffff" opacity="0.14"/>
+  <path
+    d="M348 132l18 18 42-42"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="24"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    filter="url(#iconShadow)"
+  />
+
+  <g filter="url(#softShadow)">
+    <line x1="118" y1="300" x2="394" y2="300" stroke="#ffffff" stroke-width="10" stroke-linecap="round" opacity="0.95"/>
+    <line x1="118" y1="300" x2="118" y2="214" stroke="#ffffff" stroke-width="10" stroke-linecap="round" opacity="0.95"/>
+
+    <path
+      d="M132 252 C170 236, 206 228, 244 236 C282 244, 318 262, 356 286"
+      fill="none"
+      stroke="#ffffff"
+      stroke-width="12"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+
+    <g fill="#ffffff">
+      <line x1="148" y1="252" x2="148" y2="300" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity="0.85"/>
+      <circle cx="148" cy="252" r="11"/>
+      <line x1="204" y1="238" x2="204" y2="300" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity="0.85"/>
+      <circle cx="204" cy="238" r="11"/>
+      <line x1="260" y1="236" x2="260" y2="300" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity="0.85"/>
+      <circle cx="260" cy="236" r="11"/>
+      <line x1="316" y1="254" x2="316" y2="300" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity="0.85"/>
+      <circle cx="316" cy="254" r="11"/>
+      <line x1="372" y1="286" x2="372" y2="300" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity="0.85"/>
+      <circle cx="372" cy="286" r="11"/>
+    </g>
+  </g>
+
+  <g filter="url(#softShadow)">
+    <path
+      d="M156 360 C156 338, 176 322, 206 322 L256 322 L306 322 C336 322 356 338 356 360 L356 388 C356 404 342 416 324 416 L188 416 C170 416 156 404 156 388 Z"
+      fill="#ffffff"
+      opacity="0.98"
+    />
+    <path d="M256 322 L256 416" stroke="#d9eeff" stroke-width="8" stroke-linecap="round"/>
+    <path
+      d="M176 360 C188 350, 224 346, 256 348 C288 346 324 350 336 360"
+      fill="none"
+      stroke="#d9eeff"
+      stroke-width="7"
+      stroke-linecap="round"
+    />
+    <path
+      d="M168 388 C184 378, 220 372, 256 374 C292 372 328 378 344 388"
+      fill="none"
+      stroke="#d9eeff"
+      stroke-width="6"
+      stroke-linecap="round"
+      opacity="0.9"
+    />
+  </g>
 </svg>
