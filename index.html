@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="復習">
+  <meta name="theme-color" content="#f2f2f7">
+  <title>今日やること</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/home.css?v=38">
+</head>
+<body class="app">
+  <div class="top-actions">
+    <button type="button" id="open-edit-btn" class="top-action-btn top-action-btn--primary" aria-label="科目・論点編集">
+      <span class="top-action-btn__icon" aria-hidden="true">⚙️</span>
+      <span class="top-action-btn__label">科目・論点編集</span>
+    </button>
+    <button type="button" id="open-lectures-btn" class="top-action-btn top-action-btn--secondary" aria-label="登録済み講義編集">
+      <span class="top-action-btn__icon" aria-hidden="true">📝</span>
+      <span class="top-action-btn__label">登録済み講義編集</span>
+    </button>
+    <button type="button" id="open-graph-btn" class="top-action-btn top-action-btn--secondary" aria-label="グラフ">
+      <span class="top-action-btn__icon" aria-hidden="true">📊</span>
+      <span class="top-action-btn__label">グラフ</span>
+    </button>
+  </div>
+
+  <header class="app-header">
+    <div class="exam-countdown-wrap">
+      <button type="button" id="exam-countdown-card" class="exam-countdown-card" hidden aria-label="試験日を切り替え">
+        <p class="exam-countdown-card__name" id="exam-countdown-name"></p>
+        <p class="exam-countdown-card__days" id="exam-countdown-days"></p>
+        <p class="exam-countdown-card__date" id="exam-countdown-date"></p>
+        <p class="exam-countdown-card__past" id="exam-countdown-past" hidden></p>
+        <span class="exam-countdown-card__hint">タップで切替</span>
+      </button>
+    </div>
+    <h1 class="app-header__title">今日やること</h1>
+    <p id="header-date" class="app-header__date"></p>
+    <p class="home-count" id="header-extra" hidden></p>
+  </header>
+
+  <main class="app-main">
+    <section id="today-section">
+      <div id="today-list" class="today-list"></div>
+    </section>
+
+    <section id="priority-section" class="home-section priority-section" hidden>
+      <h2 class="section-label">復習優先度ランキング</h2>
+      <p class="priority-desc">記憶定着率が低い順に表示しています（忘却曲線と同じ計算）</p>
+      <div id="priority-list" class="priority-list"></div>
+      <button type="button" id="priority-show-more" class="priority-show-more" hidden>もっと見る</button>
+    </section>
+
+    <section class="home-section">
+      <h2 class="section-label">講義登録</h2>
+      <form id="register-form">
+        <div class="ios-group">
+          <div class="ios-cell">
+            <label class="ios-cell__label" for="subject-select">科目</label>
+            <select id="subject-select" class="ios-cell__control" required></select>
+          </div>
+          <div class="ios-cell">
+            <label class="ios-cell__label" for="topic-select">論点</label>
+            <select id="topic-select" class="ios-cell__control" required></select>
+          </div>
+          <div class="ios-cell ios-cell--last">
+            <label class="ios-cell__label" for="attended-date">受講日</label>
+            <input type="date" id="attended-date" class="ios-cell__control ios-cell__control--date" required>
+          </div>
+        </div>
+        <p id="no-topics-hint" class="hint-banner" style="display:none">
+          この科目に論点がありません。右上のボタンから追加してください
+        </p>
+        <button type="submit" id="register-submit" class="submit-btn">登録する</button>
+      </form>
+    </section>
+  </main>
+
+  <div id="edit-overlay" class="edit-overlay" aria-hidden="true">
+    <div class="edit-sheet" id="edit-sheet">
+      <header class="edit-sheet__header">
+        <h2>科目・論点編集</h2>
+        <button type="button" id="close-edit-btn" class="edit-close-btn" aria-label="閉じる">✕</button>
+      </header>
+      <div class="edit-sheet__body">
+        <div id="settings-list"></div>
+        <button type="button" id="add-subject-btn" class="ios-add-btn">＋ 科目を追加</button>
+        <section class="exam-settings-section" aria-labelledby="exam-settings-heading">
+          <h3 id="exam-settings-heading" class="exam-settings-heading">試験日設定</h3>
+          <p class="exam-settings-desc">ホーム上部に表示する試験日を登録できます。カードをタップすると切り替わります。</p>
+          <div id="exam-settings-list" class="exam-settings-list"></div>
+          <button type="button" id="exam-add-btn" class="exam-add-btn">＋ 試験日を追加</button>
+        </section>
+        <section class="backup-section" aria-labelledby="backup-heading">
+          <h3 id="backup-heading" class="backup-heading">データのバックアップ</h3>
+          <p class="backup-desc">科目・論点・講義・復習履歴などのデータをJSONファイルで保存・復元できます。</p>
+          <div class="backup-actions">
+            <button type="button" id="backup-export-btn" class="backup-btn">バックアップを作成</button>
+            <label class="backup-btn backup-btn--secondary">
+              バックアップから復元
+              <input type="file" id="backup-import-input" accept="application/json,.json" hidden>
+            </label>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div id="graph-overlay" class="graph-overlay" aria-hidden="true">
+    <div class="graph-sheet" id="graph-sheet">
+      <header class="graph-sheet__header">
+        <h2>グラフ</h2>
+        <button type="button" id="close-graph-btn" class="edit-close-btn" aria-label="閉じる">✕</button>
+      </header>
+      <div class="graph-tabs">
+        <button type="button" class="graph-tab" data-graph-tab="curve">忘却曲線</button>
+        <button type="button" class="graph-tab active" data-graph-tab="daily">日別復習数</button>
+      </div>
+      <div class="graph-sheet__body">
+        <div class="graph-panel active" data-graph-panel="daily">
+          <p class="graph-desc">今後30日間の復習予定件数</p>
+          <div class="chart-wrap">
+            <canvas id="daily-chart"></canvas>
+          </div>
+        </div>
+        <div class="graph-panel" data-graph-panel="curve">
+          <p class="graph-desc">論点ごとの記憶保持率と復習予定（●=復習日、赤線=今日）</p>
+          <div id="curve-legend" class="curve-legend"></div>
+          <div class="curve-chart-container">
+            <div class="chart-wrap chart-wrap--tall">
+              <canvas id="curve-chart"></canvas>
+            </div>
+            <button
+              type="button"
+              id="curve-period-trigger"
+              class="curve-period-trigger"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-controls="curve-period-menu"
+            >
+              表示期間：<span id="curve-period-current">90日</span> ▼
+            </button>
+          </div>
+          <ul id="curve-period-menu" class="curve-period-menu" role="listbox" hidden></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <div id="modal-overlay" class="modal-overlay" hidden>
+    <div class="modal">
+      <h3 id="modal-title">追加</h3>
+      <div class="modal-form">
+        <input type="text" id="modal-input" class="modal-input" autocomplete="off" enterkeyhint="done">
+        <div class="modal-actions">
+          <button id="modal-cancel" class="modal-btn cancel" type="button">キャンセル</button>
+          <button id="modal-confirm" class="modal-btn confirm" type="button">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="lectures-overlay" class="edit-overlay" aria-hidden="true">
+    <div class="edit-sheet" id="lectures-sheet">
+      <header class="edit-sheet__header">
+        <h2 id="lectures-sheet-title">登録済み講義編集</h2>
+        <button type="button" id="close-lectures-btn" class="edit-close-btn" aria-label="閉じる">✕</button>
+      </header>
+      <div class="edit-sheet__body">
+        <div id="lectures-list-view">
+          <div id="registered-list" class="registered-list"></div>
+        </div>
+        <div id="lectures-edit-view" hidden>
+          <div class="ios-group">
+            <div class="ios-cell">
+              <label class="ios-cell__label" for="lecture-edit-subject">科目</label>
+              <select id="lecture-edit-subject" class="ios-cell__control"></select>
+            </div>
+            <div class="ios-cell">
+              <label class="ios-cell__label" for="lecture-edit-topic">論点</label>
+              <select id="lecture-edit-topic" class="ios-cell__control"></select>
+            </div>
+            <div class="ios-cell ios-cell--last">
+              <label class="ios-cell__label" for="lecture-edit-date">受講日</label>
+              <input type="date" id="lecture-edit-date" class="ios-cell__control ios-cell__control--date">
+            </div>
+          </div>
+          <section class="lecture-history-section">
+            <h3 class="lecture-history-heading">復習履歴</h3>
+            <p class="lecture-history-desc">受講後に行った復習の日付と結果を登録できます</p>
+            <div id="lecture-review-history" class="lecture-review-history"></div>
+            <button type="button" id="lecture-history-add" class="lecture-history-add-btn">＋ 復習履歴を追加</button>
+          </section>
+          <button type="button" id="lecture-edit-delete" class="lectures-delete-btn">削除</button>
+          <div class="modal-actions lectures-edit-actions">
+            <button id="lecture-edit-cancel" class="modal-btn cancel" type="button">キャンセル</button>
+            <button id="lecture-edit-save" class="modal-btn confirm" type="button">保存</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="js/storage.js?v=34"></script>
+  <script src="js/charts.js?v=39"></script>
+  <script src="js/app.js?v=34"></script>
+</body>
+</html>
