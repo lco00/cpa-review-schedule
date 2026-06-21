@@ -134,7 +134,7 @@ function renderExamSettings() {
   const list = document.getElementById('exam-settings-list');
   if (!list) return;
 
-  const exams = getExams();
+  const exams = getExamsSortedByRemainingDays();
   if (exams.length === 0) {
     list.innerHTML = '<p class="exam-settings-empty">試験日が登録されていません</p>';
     return;

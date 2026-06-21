@@ -279,6 +279,29 @@ function getExams() {
   return [...(loadData().exams || [])];
 }
 
+function getExamDaysUntil(exam) {
+  return daysBetween(getToday(), exam.examDate);
+}
+
+function compareExamsByRemainingDays(a, b) {
+  const diffA = getExamDaysUntil(a);
+  const diffB = getExamDaysUntil(b);
+  const aRemaining = diffA >= 0;
+  const bRemaining = diffB >= 0;
+
+  if (aRemaining && bRemaining) {
+    if (diffA !== diffB) return diffA - diffB;
+    return a.examDate.localeCompare(b.examDate);
+  }
+  if (aRemaining !== bRemaining) return aRemaining ? -1 : 1;
+  if (diffB !== diffA) return diffB - diffA;
+  return a.examDate.localeCompare(b.examDate);
+}
+
+function getExamsSortedByRemainingDays() {
+  return getExams().sort(compareExamsByRemainingDays);
+}
+
 function getSelectedExamIndex() {
   const data = loadData();
   if (!data.exams?.length) return 0;
@@ -301,10 +324,17 @@ function setSelectedExamIndex(index) {
 function cycleSelectedExam() {
   const data = loadData();
   if (!data.exams?.length) return null;
-  const next = (getSelectedExamIndex() + 1) % data.exams.length;
-  data.selectedExamIndex = next;
+
+  const sorted = getExamsSortedByRemainingDays();
+  const current = getSelectedExam();
+  const sortedIndex = current ? sorted.findIndex((exam) => exam.id === current.id) : -1;
+  const nextSortedIndex = (Math.max(0, sortedIndex) + 1) % sorted.length;
+  const nextExam = sorted[nextSortedIndex];
+  const rawIndex = data.exams.findIndex((exam) => exam.id === nextExam.id);
+
+  data.selectedExamIndex = rawIndex >= 0 ? rawIndex : 0;
   saveData(data);
-  return data.exams[next];
+  return data.exams[data.selectedExamIndex];
 }
 
 function formatExamDateDisplay(dateStr) {
