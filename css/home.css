@@ -115,6 +115,20 @@
   color: var(--text);
 }
 
+@media (max-width: 480px) {
+  .app-header__title-row {
+    gap: 8px;
+  }
+
+  .app-header__title {
+    flex: 0 1 auto;
+    min-width: auto;
+    font-size: 1.5625rem;
+    white-space: nowrap;
+    letter-spacing: -0.04em;
+  }
+}
+
 .header-toolbar {
   display: flex;
   flex: 0 0 auto;
@@ -214,7 +228,7 @@
 
 @media (max-width: 380px) {
   .app-header__title {
-    font-size: 1.625rem;
+    font-size: 1.4375rem;
   }
 
   .header-toolbar-btn {
