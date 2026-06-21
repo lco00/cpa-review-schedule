@@ -1274,6 +1274,7 @@ function init() {
     initBackupUI();
     initExamUI();
     initAuthLogoutButton();
+    initPasswordChangeUI(showToast);
   } catch (err) {
     console.error('init render failed:', err);
   }

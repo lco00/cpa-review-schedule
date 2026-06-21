@@ -1403,6 +1403,72 @@ select.ios-cell__control option {
   opacity: 0.75;
 }
 
+.password-change-open-btn {
+  display: block;
+  width: 100%;
+  margin-top: 24px;
+  margin-bottom: 8px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.password-change-open-btn:active {
+  opacity: 0.75;
+}
+
+.password-modal__title {
+  margin-bottom: 16px;
+}
+
+.password-modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.password-modal__label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.password-modal__input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 1rem;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.password-modal__input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
+}
+
+.password-modal__error {
+  margin: 4px 0 0;
+  font-size: 0.8125rem;
+  color: var(--forgot, #ff3b30);
+}
+
+.password-modal .modal-actions {
+  margin-top: 12px;
+}
+
 .exam-settings-section {
   margin-top: 24px;
   padding: 16px;
